@@ -1,17 +1,17 @@
+# This python file extract data about the crew members of Titanic from the Wikipedia.org sources.  
+# There is 8 relevant tables about the Crew members
+# 0 Ship's officers ,1 Deck crew ,2 Engineering crew, 3 Victualling crew, 4 Restaurant staff, 
+# 5 Postal clerks, 6 Guarantee group, 7 Ship's orchestra
+
 import bs4 as bs
 import urllib.request
 import csv
 
 sauce = urllib.request.urlopen('https://en.wikipedia.org/wiki/Crew_of_the_RMS_Titanic').read()
 soup = bs.BeautifulSoup(sauce,'lxml')
-
 tables = soup.find_all('table')
 
-
-# there is 8 tables
-# 0 Ship's officers ,1 Deck crew ,2 Engineering crew, 3 Victualling crew, 4 Restaurant staff, 5 Postal clerks, 6 Guarantee group, 7 Ship's orchestra
-
-# func recebe uma tabela e transforma em uma lista 
+# Function that recive a table and make a list
 def make_list (x):
     tab = tables[x]
     rows = tab.find_all('tr')
@@ -24,12 +24,12 @@ def make_list (x):
             lista.append(row)
     return(lista)
 
-#Throw in CSV 
+# Create CSV and write first line. 
 csv_file = open('Titanic_Wiki_CREW.csv','w',newline='',encoding='utf-8')
 writer = csv.writer(csv_file)
-writer.writerow(('name','age','hometown','boarded','position','lifeboat'))
+writer.writerow(('Name','Age','Hometown','Boarded','Position','Lifeboat'))
 
-# Create a list with all crew then 
+# Create a list (crew) with all table contents and throw them in the CSV
 i_a = 0
 crew = []
 while i_a < 8:

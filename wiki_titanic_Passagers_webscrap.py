@@ -1,15 +1,14 @@
+# This python file extract data about the passengers of Titanic from the Wikipedia.org sources.  
+# There is 3 relevant tables about the passengers
+# 0 First Class, 1 Second Class, 2 Third Class
+
 import bs4 as bs
 import urllib.request
 import csv
 
 sauce = urllib.request.urlopen('https://en.wikipedia.org/wiki/Passengers_of_the_RMS_Titanic').read()
 soup = bs.BeautifulSoup(sauce,'lxml')
-
 tables = soup.find_all('table')
-# table[0] = FirstClass / table[1] = SecondClass / table[2] = thirdClass
-firstClass = tables[0]
-secondClass = tables[1]
-thirdClass = tables[2]
 
 # func recebe uma tabela e transforma em uma lista 
 def make_list (tab,classy):
@@ -20,7 +19,7 @@ def make_list (tab,classy):
         # (strip = true) gets /n off the mix
         row = [i.get_text(strip=True)  for i in elements]
         if len(row) != 0:
-            row.append(classy)
+            row.append(classy + 1)
             lista.append(row)
     return(lista)
 
@@ -28,13 +27,17 @@ def make_list (tab,classy):
 # Throw in CSV 
 csv_file = open('Titanic_Wiki.csv','w',newline='',encoding='utf-8')
 writer = csv.writer(csv_file)
-writer.writerow(('Name','Age', 'Hometown','Boarded','Destination','Lifeboat','Classes'))
+writer.writerow(('Name','Age', 'Hometown','Boarded','Destination','Lifeboat','Class'))
 
 
-# put everything in big-list with tables "Alive"
-alive = make_list(firstClass,'1') + make_list(secondClass,'2') + make_list(thirdClass,'3')
+# put everything in big-list with tables "passengers"
+passengers = []
+i_a = 0
+while i_a < 3:
+    passengers = passengers + make_list(tables[i_a],i_a)
+    i_a = i_a + 1
     
-for i in alive:
+for i in passengers:
     if len(i) == 9:
         hometown = str(i[2]) + ", " + str(i[3])
         boarded = i[4]
